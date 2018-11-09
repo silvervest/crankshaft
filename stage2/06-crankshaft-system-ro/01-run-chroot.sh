@@ -24,6 +24,9 @@ echo "ramfs		/tmp/.usbdrives		ramfs			size=16m,nodev,nosuid,noatime,nodiratime		
 sed -i 's/root=ROOTDEV/root=\/dev\/mmcblk0p2/' /boot/cmdline.txt
 sed -i "s/#Storage=auto/Storage=volatile/" /etc/systemd/journald.conf
 
+# Mount new storage partition as rw
+echo "/dev/mmcblk0p3	/storage		ext4			rw,defaults,noatime,nodiratime	0	0" >> /etc/fstab
+
 # Link dirs for read only
 rm -rf /var/spool /var/lock /var/lib/dhcp /var/lib/dhcpcd5 /var/cache/apt/ /var/lib/bluetooth
 rm /etc/resolv.conf
@@ -53,3 +56,7 @@ sed -i 's/spool 0755/spool 1777/' /usr/lib/tmpfiles.d/var.conf
 
 # Create pulse dir
 mkdir /var/lib/pulse
+
+# Create mount folder for 3rd partition
+mkdir /storage
+chmod 777 /storage
