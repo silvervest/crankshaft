@@ -11,6 +11,17 @@ if [ ! -f /etc/cs_resize_done ]; then
     echo "[${CYAN}${BOLD} INFO ${RESET}] Partition and Filesystem not resized - resizing..." > /dev/tty3
     echo "[${CYAN}${BOLD} INFO ${RESET}] *******************************************************" > /dev/tty3
     /usr/local/bin/crankshaft resize
+    if [ $? -ne 0 ]; then
+        echo "[${RED}${BOLD} FAIL ${RESET}] *******************************************************" > /dev/tty3
+        echo "[${RED}${BOLD} FAIL ${RESET}] Resizing failed!" > /dev/tty3
+        echo "[${RED}${BOLD} FAIL ${RESET}] *******************************************************" > /dev/tty3
+        echo "[${RED}${BOLD} FAIL ${RESET}] Skipping resize to prevent from bootloop." > /dev/tty3
+        echo "[${RED}${BOLD} FAIL ${RESET}] *******************************************************" > /dev/tty3
+        /usr/local/bin/crankshaft filesystem system unlock
+        touch /etc/cs_resize_done
+        /usr/local/bin/crankshaft filesystem system lock
+        sleep 10
+    fi
     sync
     reboot
 fi
